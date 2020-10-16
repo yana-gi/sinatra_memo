@@ -5,6 +5,7 @@ require 'date'
 
 class Memo
   @json_file_path = './public/memo.json'
+  @numbering_id = 1
 
   def self.load
     json = File.open(@json_file_path).read
@@ -18,7 +19,8 @@ class Memo
 
   def self.make(memo_title, memo_text)
     json_data = self.load
-    json_data[id] = { title: memo_title, text: memo_text }
+    @numbering_id += 1
+    json_data[@numbering_id] = { title: memo_title, text: memo_text }
     File.open(@json_file_path, 'w') { |io| JSON.dump(json_data, io) }
   end
 
