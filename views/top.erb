@@ -1,0 +1,11 @@
+<a href="/memos/new" type="button" class="btn btn-dark w-50">追加</a>
+<div class="row mt-4">
+  <ul>
+    <% @memos.each do |id,memo| %>
+      <li>
+        <a href="/memos/<%= id %>"><%= memo["title"] %></a>
+      </li>
+    <% end %>
+    </ul>
+</div>
+

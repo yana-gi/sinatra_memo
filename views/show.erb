@@ -1,0 +1,30 @@
+<div class="container-fluid">
+<div class="row my-2">
+  <div class="memo-title">
+    <h2><%= @memo[@id]["title"] %></h2>
+  </div>
+</div>
+<div class="row my-2">
+  <div class="memo-text" style ="white-space: pre-wrap;"><%= @memo[@id]["text"]%></div>
+</div>
+
+  <div class="row  m-4">
+  
+    <div class="col">
+      <a href="<%= @id %>/edit" type="button" class="btn btn-dark  w-100">変更</a>
+    </div>
+    <div class="col">
+      <form method = "post" action = "/memos/<%= @id %>">
+        <input type = "hidden" name = "_method" value = "delete">
+        <input type = "submit" class="btn btn-dark w-100" value="削除">
+      </form>
+    </div> 
+  </div>
+    <div class="row">
+    <div class="col">
+      <a href="/memos" type="button" class="btn btn-dark w-40">戻る</a>
+    </div>
+
+  </div>
+  </div>
+</div>
