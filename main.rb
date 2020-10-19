@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'sinatra'
 require 'sinatra/reloader'
 require 'json'
@@ -5,7 +7,6 @@ require 'date'
 
 class Memo
   @json_file_path = './public/memo.json'
-  @numbering_id = 1
 
   def self.load
     json = File.open(@json_file_path).read
@@ -39,16 +40,16 @@ get '/memos' do
   erb :top
 end
 
-get '/memos/new' do
-  @title = 'New memo'
-  erb :new
-end
-
 post '/memos' do
   memo_title = params[:memo_title]
   memo_text = params[:memo_text]
   Memo.make(memo_title, memo_text)
   redirect to('/memos')
+end
+
+get '/memos/new' do
+  @title = 'New memo'
+  erb :new
 end
 
 get '/memos/:id/edit' do
@@ -58,19 +59,19 @@ get '/memos/:id/edit' do
   erb :edit
 end
 
+get '/memos/:id' do
+  @title = 'Show memo'
+  @id = params[:id]
+  @memo = Memo.load['memo']
+  erb :show
+end
+
 patch '/memos/:id' do
   @id = params[:id]
   memo_title = params[:memo_title]
   memo_text = params[:memo_text]
   Memo.edit(memo_title, memo_text, @id)
   redirect to('/memos')
-end
-
-get '/memos/:id' do
-  @title = 'Show memo'
-  @id = params[:id]
-  @memo = Memo.load['memo']
-  erb :show
 end
 
 delete '/memos/:id' do

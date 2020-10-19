@@ -2,10 +2,9 @@
 <div class="row mt-4">
   <ul>
     <% @memos.each do |id,memo| %>
-      <li>
-        <a href="/memos/<%= id %>"><%= memo["title"] %></a>
-      </li>
+    <li>
+      <a href="/memos/<%= id %>"><%= memo["title"] %></a>
+    </li>
     <% end %>
-    </ul>
+  </ul>
 </div>
-

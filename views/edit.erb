@@ -3,10 +3,10 @@
     <input type="text" name="memo_title" class="form-control" value="<%=@memo[@id]['title']%>">
   </div>
   <div class="form-group">
-    <textarea class="form-control" name="memo_text" rows="10" ><%= @memo[@id]["text"] %></textarea>
+    <textarea class="form-control" name="memo_text" rows="10"><%= @memo[@id]["text"] %></textarea>
   </div>
   <div class="text-center">
-    <input type = "hidden" name = "_method" value = "patch">
-    <input type = "submit" class="btn btn-dark  w-50" value="変更">
+    <input type="hidden" name="_method" value="patch">
+    <input type="submit" class="btn btn-dark  w-50" value="変更">
   </div>
 </form>
