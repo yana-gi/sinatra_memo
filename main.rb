@@ -12,34 +12,30 @@ class Memo
     JSON.parse(json)
   end
 
-  def self.id
-    nowtime = DateTime.now
-    nowtime.strftime('%Y%m%d_%H%M%S')
-  end
-
   def self.make(memo_title, memo_text)
     json_data = self.load
-    @numbering_id += 1
-    json_data[@numbering_id] = { title: memo_title, text: memo_text }
+    last_id = json_data['last_id']
+    last_id += 1
+    json_data['memo'][last_id] = { title: memo_title, text: memo_text }
     File.open(@json_file_path, 'w') { |io| JSON.dump(json_data, io) }
   end
 
   def self.edit(memo_title, memo_text, id)
     json_data = self.load
-    json_data[id] = { title: memo_title, text: memo_text }
+    json_data['memo'][id] = { title: memo_title, text: memo_text }
     File.open(@json_file_path, 'w') { |io| JSON.dump(json_data, io) }
   end
 
   def self.delete(id)
     json_data = self.load
-    json_data.delete(id)
+    json_data['memo'].delete(id)
     File.open(@json_file_path, 'w') { |io| JSON.dump(json_data, io) }
   end
 end
 
 get '/memos' do
   @title = 'Top'
-  @memos = Memo.load
+  @memos = Memo.load['memo']
   erb :top
 end
 
@@ -58,7 +54,7 @@ end
 get '/memos/:id/edit' do
   @title = 'Edit memo'
   @id = params[:id]
-  @memo = Memo.load
+  @memo = Memo.load['memo']
   erb :edit
 end
 
@@ -73,7 +69,7 @@ end
 get '/memos/:id' do
   @title = 'Show memo'
   @id = params[:id]
-  @memo = Memo.load
+  @memo = Memo.load['memo']
   erb :show
 end
 
