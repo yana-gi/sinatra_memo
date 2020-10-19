@@ -8,27 +8,25 @@ require 'date'
 class Memo
   def initialize
     @json_file_path = './public/memo.json'
+
     json = File.open(@json_file_path).read
     @json_data = JSON.parse(json)
+
+    @last_id = @json_data['last_id']
+    @list = @json_data['memo']
   end
 
   def load
-    @json_data['memo']
+    @list
   end
 
   def save(memo_title, memo_text, id = nil)
-    memos = load
-    memos[id ||= make_id] = { title: memo_title, text: memo_text }
+    @list[id ||= (@last_id += 1)] = { title: memo_title, text: memo_text }
     File.open(@json_file_path, 'w') { |io| JSON.dump(@json_data, io) }
   end
 
-  def make_id
-    @json_data['last_id'] += 1
-  end
-
   def delete(id)
-    memos = load
-    memos.delete(id)
+    @list.delete(id)
     File.open(@json_file_path, 'w') { |io| JSON.dump(@json_data, io) }
   end
 end
@@ -36,7 +34,7 @@ end
 get '/memos' do
   @title = 'Top'
   memo = Memo.new
-  @memos = memo.load
+  @memo_list = memo.load
   erb :top
 end
 
@@ -57,7 +55,7 @@ get '/memos/:id/edit' do
   @title = 'Edit memo'
   @id = params[:id]
   memo = Memo.new
-  @memo = memo.load
+  @memo_list = memo.load
   erb :edit
 end
 
@@ -65,7 +63,7 @@ get '/memos/:id' do
   @title = 'Show memo'
   @id = params[:id]
   memo = Memo.new
-  @memo = memo.load
+  @memo_list = memo.load
   erb :show
 end
 
