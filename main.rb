@@ -6,44 +6,45 @@ require 'json'
 require 'date'
 
 class Memo
-  @json_file_path = './public/memo.json'
-
-  def self.load
+  def initialize
+    @json_file_path = './public/memo.json'
     json = File.open(@json_file_path).read
-    JSON.parse(json)
+    @json_data = JSON.parse(json)
   end
 
-  def self.make(memo_title, memo_text)
-    json_data = self.load
-    last_id = json_data['last_id']
-    last_id += 1
-    json_data['memo'][last_id] = { title: memo_title, text: memo_text }
-    File.open(@json_file_path, 'w') { |io| JSON.dump(json_data, io) }
+  def load
+    @json_data['memo']
   end
 
-  def self.edit(memo_title, memo_text, id)
-    json_data = self.load
-    json_data['memo'][id] = { title: memo_title, text: memo_text }
-    File.open(@json_file_path, 'w') { |io| JSON.dump(json_data, io) }
+  def save(memo_title, memo_text, id = nil)
+    memos = load
+    memos[id ||= make_id] = { title: memo_title, text: memo_text }
+    File.open(@json_file_path, 'w') { |io| JSON.dump(@json_data, io) }
   end
 
-  def self.delete(id)
-    json_data = self.load
-    json_data['memo'].delete(id)
-    File.open(@json_file_path, 'w') { |io| JSON.dump(json_data, io) }
+  def make_id
+    @json_data['last_id'] += 1
+  end
+
+  def delete(id)
+    memos = load
+    memos.delete(id)
+    File.open(@json_file_path, 'w') { |io| JSON.dump(@json_data, io) }
   end
 end
 
 get '/memos' do
   @title = 'Top'
-  @memos = Memo.load['memo']
+  memo = Memo.new
+  @memos = memo.load
   erb :top
 end
 
 post '/memos' do
   memo_title = params[:memo_title]
   memo_text = params[:memo_text]
-  Memo.make(memo_title, memo_text)
+  memo = Memo.new
+  memo.save(memo_title, memo_text)
   redirect to('/memos')
 end
 
@@ -55,14 +56,16 @@ end
 get '/memos/:id/edit' do
   @title = 'Edit memo'
   @id = params[:id]
-  @memo = Memo.load['memo']
+  memo = Memo.new
+  @memo = memo.load
   erb :edit
 end
 
 get '/memos/:id' do
   @title = 'Show memo'
   @id = params[:id]
-  @memo = Memo.load['memo']
+  memo = Memo.new
+  @memo = memo.load
   erb :show
 end
 
@@ -70,12 +73,14 @@ patch '/memos/:id' do
   @id = params[:id]
   memo_title = params[:memo_title]
   memo_text = params[:memo_text]
-  Memo.edit(memo_title, memo_text, @id)
+  memo = Memo.new
+  memo.save(memo_title, memo_text, @id)
   redirect to('/memos')
 end
 
 delete '/memos/:id' do
   @id = params[:id]
-  Memo.delete(@id)
+  memo = Memo.new
+  memo.delete(@id)
   redirect to('/memos')
 end
