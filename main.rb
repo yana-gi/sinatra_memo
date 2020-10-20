@@ -3,8 +3,8 @@
 require 'sinatra'
 require 'sinatra/reloader'
 require 'json'
-require 'date'
 
+# メモデータを読み書きするクラス
 class Memo
   def initialize
     @json_file_path = './public/memo.json'
