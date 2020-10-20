@@ -1,9 +1,9 @@
-<a href="/memos/new" type="button" class="btn btn-dark w-50">追加</a>
-<div class="row mt-4">
+<a href="/memos/new" type="button" class="btn bg-secondary text-light w-50 my-3">追加</a>
+<div class="row">
   <ul>
     <% @memo_list.each do |id,memo| %>
-    <li>
-      <a href="/memos/<%= id %>"><%= memo["title"] %></a>
+    <li class="my-2">
+      <a class="text-dark" href="/memos/<%= id %>"><%= memo["title"] %></a>
     </li>
     <% end %>
   </ul>

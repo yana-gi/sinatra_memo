@@ -6,11 +6,12 @@
     <title><%= @title %></title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
       integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="/style.css" type="text/css">
 </head>
 
-<body class="bg-secondary">
+<body>
   <div class="px-3 py-2 mx-2 text-light "><%= @title %></div>
-  <div style="width: 500px;min-height :500px;" class="d-block bg-light min-vh-60 p-3 mx-4 rounded-lg shadow">
+  <div class="d-block bg-light min-vh-60 p-3 mx-4 rounded-lg shadow">
     <h1>メモアプリ</h1>
     <%= yield %>
   </div>
