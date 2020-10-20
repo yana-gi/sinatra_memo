@@ -6,6 +6,8 @@ require 'json'
 
 # メモデータを読み書きするクラス
 class Memo
+  attr_accessor :list
+  
   def initialize(json_data, json_file_path)
     @json_file_path = json_file_path
     @json_data = json_data
