@@ -6,22 +6,22 @@ require 'json'
 
 # メモデータを読み書きするクラス
 class Memo
-  def initialize
-    @json_file_path = './public/memo.json'
-
-    json = File.open(@json_file_path).read
-    @json_data = JSON.parse(json)
-
-    @last_id = @json_data['last_id']
+  def initialize(json_data, json_file_path)
+    @json_file_path = json_file_path
+    @json_data = json_data
     @list = @json_data['memo']
   end
 
-  def load
-    @list
+  def self.load
+    json_file_path = './public/memo.json'
+    json = File.open(json_file_path).read
+    json_data = JSON.parse(json)
+    Memo.new(json_data, json_file_path)
   end
 
   def save(memo_title, memo_text, id = nil)
-    @list[id ||= (@last_id += 1)] = { title: memo_title, text: memo_text }
+    id ||= @json_data['last_id'] += 1
+    @list[id] = { title: memo_title, text: memo_text }
     File.open(@json_file_path, 'w') { |io| JSON.dump(@json_data, io) }
   end
 
@@ -33,15 +33,15 @@ end
 
 get '/memos' do
   @title = 'Top'
-  memo = Memo.new
-  @memo_list = memo.load
+  memo = Memo.load
+  @memo_list = memo.list
   erb :top
 end
 
 post '/memos' do
   memo_title = params[:memo_title]
   memo_text = params[:memo_text]
-  memo = Memo.new
+  memo = Memo.load
   memo.save(memo_title, memo_text)
   redirect to('/memos')
 end
@@ -54,16 +54,16 @@ end
 get '/memos/:id/edit' do
   @title = 'Edit memo'
   @id = params[:id]
-  memo = Memo.new
-  @memo_list = memo.load
+  memo = Memo.load
+  @memo_list = memo.list
   erb :edit
 end
 
 get '/memos/:id' do
   @title = 'Show memo'
   @id = params[:id]
-  memo = Memo.new
-  @memo_list = memo.load
+  memo = Memo.load
+  @memo_list = memo.list
   erb :show
 end
 
@@ -71,14 +71,14 @@ patch '/memos/:id' do
   @id = params[:id]
   memo_title = params[:memo_title]
   memo_text = params[:memo_text]
-  memo = Memo.new
+  memo = Memo.load
   memo.save(memo_title, memo_text, @id)
   redirect to('/memos')
 end
 
 delete '/memos/:id' do
   @id = params[:id]
-  memo = Memo.new
+  memo = Memo.load
   memo.delete(@id)
   redirect to('/memos')
 end
