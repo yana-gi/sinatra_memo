@@ -7,7 +7,7 @@ require 'json'
 # メモデータを読み書きするクラス
 class Memo
   attr_accessor :list
-  
+
   def initialize(json_data, json_file_path)
     @json_file_path = json_file_path
     @json_data = json_data
@@ -15,7 +15,7 @@ class Memo
   end
 
   def self.load
-    json_file_path = './public/memo.json'
+    json_file_path = './data/memo.json'
     json = File.open(json_file_path).read
     json_data = JSON.parse(json)
     Memo.new(json_data, json_file_path)
