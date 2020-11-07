@@ -7,23 +7,22 @@ require 'sinatra/reloader'
 
 # メモデータを読み書きするクラス
 class Memo
-  attr_accessor :list
-
-  def initialize(memo, connection)
-    @list = memo
+  def initialize(connection)
     @connection = connection
   end
 
-  def self.load
+  def self.connect
     connection = PG::connect({ host: 'localhost', user: 'postgres', password: 'password', dbname: 'sinatra_memo' })
+    Memo.new(connection)
+  end
 
-    results = connection.exec('SELECT * FROM memo ORDER BY id')
-    memo = {}
+  def load
+    results = @connection.exec('SELECT * FROM memo ORDER BY id')
+    memos = {}
     results.each do |result|
-      memo[result['id']] = { 'title' => result['title'], 'text' => result['text'] }
+      memos[result['id']] = { 'title' => result['title'], 'text' => result['text'] }
     end
-
-    Memo.new(memo, connection)
+    memos
   end
 
   def create(memo_title, memo_text)
@@ -60,15 +59,15 @@ end
 
 get '/memos' do
   @title = 'Top'
-  memo = Memo.load
-  @memo_list = memo.list
+  memo = Memo.connect
+  @memo_list = memo.load
   erb :top
 end
 
 post '/memos' do
   memo_title = params[:memo_title]
   memo_text = params[:memo_text]
-  memo = Memo.load
+  memo = Memo.connect
   memo.create(memo_title, memo_text)
   redirect to('/memos')
 end
@@ -81,16 +80,16 @@ end
 get '/memos/:id/edit' do
   @title = 'Edit memo'
   @id = params[:id]
-  memo = Memo.load
-  @memo_list = memo.list
+  memo = Memo.connect
+  @memo_list = memo.load
   erb :edit
 end
 
 get '/memos/:id' do
   @title = 'Show memo'
   @id = params[:id]
-  memo = Memo.load
-  @memo_list = memo.list
+  memo = Memo.connect
+  @memo_list = memo.load
   erb :show
 end
 
@@ -98,14 +97,14 @@ patch '/memos/:id' do
   @id = params[:id]
   memo_title = params[:memo_title]
   memo_text = params[:memo_text]
-  memo = Memo.load
+  memo = Memo.connect
   memo.edit(memo_title, memo_text, @id)
   redirect to('/memos')
 end
 
 delete '/memos/:id' do
   @id = params[:id]
-  memo = Memo.load
+  memo = Memo.connect
   memo.delete(@id)
   redirect to('/memos')
 end
