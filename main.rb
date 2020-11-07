@@ -12,7 +12,12 @@ class Memo
   end
 
   def self.connect
-    connection = PG::connect({ host: 'localhost', user: 'postgres', password: 'password', dbname: 'sinatra_memo' })
+    connection = PG::connect(
+      host: ENV['PGHOST'],
+      user: ENV['PGUSER'],
+      password: ENV['PGPASSWORD'],
+      dbname: ENV['PGDATABASE']
+    )
     Memo.new(connection)
   end
 
