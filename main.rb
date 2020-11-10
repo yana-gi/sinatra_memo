@@ -22,12 +22,11 @@ class Memo
   end
 
   def load(id = nil)
-    sql = if id
-            "SELECT * FROM memo WHERE id = #{id} ORDER BY id"
-          else
-            'SELECT * FROM memo ORDER BY id'
-          end
-    results = @connection.exec(sql)
+    results = if id
+                @connection.exec_params('SELECT * FROM memo WHERE id = $1 ORDER BY id', [id])
+              else
+                @connection.exec_params('SELECT * FROM memo ORDER BY id')
+              end
     memos = {}
     results.each do |result|
       memos[result['id']] = { 'title' => result['title'], 'text' => result['text'] }
