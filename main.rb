@@ -21,8 +21,13 @@ class Memo
     Memo.new(connection)
   end
 
-  def load
-    results = @connection.exec('SELECT * FROM memo ORDER BY id')
+  def load(id = nil)
+    sql = if id
+            "SELECT * FROM memo WHERE id = #{id} ORDER BY id"
+          else
+            'SELECT * FROM memo ORDER BY id'
+          end
+    results = @connection.exec(sql)
     memos = {}
     results.each do |result|
       memos[result['id']] = { 'title' => result['title'], 'text' => result['text'] }
@@ -86,7 +91,7 @@ get '/memos/:id/edit' do
   @title = 'Edit memo'
   @id = params[:id]
   memo = Memo.connect
-  @memo_list = memo.load
+  @memo_list = memo.load(@id)
   erb :edit
 end
 
@@ -94,7 +99,7 @@ get '/memos/:id' do
   @title = 'Show memo'
   @id = params[:id]
   memo = Memo.connect
-  @memo_list = memo.load
+  @memo_list = memo.load(@id)
   erb :show
 end
 
